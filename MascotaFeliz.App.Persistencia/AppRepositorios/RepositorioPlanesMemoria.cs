@@ -1,3 +1,6 @@
+using System;
+//using System.Collections.Generic;
+using System.Linq;
 using System.Collections.Generic;
 using MascotaFeliz.App.Dominio;
 
@@ -6,6 +9,11 @@ namespace MascotaFeliz.App.Persistencia.AppRepositorios
     public class RepositorioPlanesMemoria : IRepositorioPlanes
     {
         List<Planes> plan;
+        List<Dueño> dueño;
+        List<Mascota> mascota;
+
+
+
         public RepositorioPlanesMemoria()
         {
             plan = new List<Planes>()
@@ -23,11 +31,70 @@ namespace MascotaFeliz.App.Persistencia.AppRepositorios
                 new Planes{Id=11, Bienestar="Gastos de Defensa", Elite="Gastos de Defensa", Diamante="Gastos de Defensa"}
 
             };
+
+            dueño = new List<Dueño>()
+            {
+
+                new Dueño{IdDueño=2, IdentificacionDueño="Cedula", Nombre="Nombre", Apellido="Apellido", Direccion="Direccion", Telefono="Telefono",NombreMascota="Nombre Mascota"},
+                new Dueño{IdDueño=3, IdentificacionDueño="67032716", Nombre="Alexis", Apellido="Pedroza", Direccion="Calle 44a # 45-06", Telefono="3207813976",NombreMascota="picolo"}
+            };
+
+            mascota = new List<Mascota>()
+            {
+
+                new Mascota{IdMascota=2, CodigoMascota=002, NombreMascota="Nombre Mascota", Edad="Edad", Raza="Raza", Tipo="Tipo", Planes="Plan",IdentificacionDueño="Cedula Dueño"},
+                new Mascota{IdMascota=3, CodigoMascota=003, NombreMascota="rastier", Edad="1", Raza="buldosrer", Tipo="gato", Planes="Bienestar",IdentificacionDueño="67032716"}
+            };
         }
 
-        public IEnumerable<Planes> GetAll()
+        public IEnumerable<Planes> GetPlanes()
         {
             return plan;
+            //return dueño;
         }
+
+        public IEnumerable<Dueño> GetDueños()
+        {
+            return dueño;
+        }
+
+        public IEnumerable<Mascota> GetMascotas()
+        {
+            return mascota;
+        }
+
+        public Dueño GetDueñoPorId(int dueñoID)
+        {
+            return dueño.SingleOrDefault(s => s.IdDueño == dueñoID);
+        }
+
+        public Mascota GetMascotaPorId(int mascotaID)
+        {
+            return mascota.SingleOrDefault(s => s.IdMascota == mascotaID);
+        }
+
+        public Dueño UpdateDueño(Dueño dueñoActualizado)
+        {
+            var dueños = dueño.SingleOrDefault(r => r.IdDueño == dueñoActualizado.IdDueño);
+            if (dueños != null)
+            {
+                dueños.IdentificacionDueño = dueñoActualizado.IdentificacionDueño;
+                dueños.Nombre = dueñoActualizado.Nombre;
+                dueños.Apellido = dueñoActualizado.Apellido;
+                dueños.Direccion = dueñoActualizado.Direccion;
+                dueños.Telefono = dueñoActualizado.Telefono;
+                dueños.NombreMascota = dueñoActualizado.NombreMascota;
+            }
+            return dueños;
+
+        }
+
+        public Dueño AddDueño(Dueño nuevoDueño)
+        {
+            nuevoDueño.IdDueño=dueño.Max(r => r.IdDueño)+1;
+            dueño.Add(nuevoDueño);
+            return nuevoDueño;
+        }
+
     }
 }
