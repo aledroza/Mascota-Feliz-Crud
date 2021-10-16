@@ -3,19 +3,43 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using MascotaFeliz.App.Dominio;
+//using MascotaFeliz.App.Persistencia;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace MascotaFeliz.App.Persistencia.AppRepositorios
 {
     public class RepositorioPlanesMemoria : IRepositorioPlanes
     {
+        private readonly AppContext _appContext;
+        /*//referenciando base de datos
+        /// <summary>
+        /// Referencia al contexto de Dueño
+        /// </summary>
+        private readonly AppContext _appContext;
+        /// <summary>
+        /// Metodo Constructor utiliza
+        /// Inyeccion de dependencias para indicar el contexto a utilizar
+        /// </summary>
+        /// <param name ="appContext"></param>//*/
+
+        //----------------------------------------
         List<Planes> plan;
         List<Dueño> dueño;
         List<Mascota> mascota;
 
 
 
+        public RepositorioPlanesMemoria(AppContext appContext)
+        {
+            // referenciando base de datos
+            _appContext = appContext;
+        }
         public RepositorioPlanesMemoria()
         {
+            // referenciando base de datos
+            // _appContext = appContext;
+            //-------------------------------------------
             plan = new List<Planes>()
             {
                 new Planes{Id=1, Bienestar="Bienestar / Plan Basico", Elite="Elite / Plan Medio", Diamante="Diamante / Plan Full"},
@@ -35,8 +59,8 @@ namespace MascotaFeliz.App.Persistencia.AppRepositorios
             dueño = new List<Dueño>()
             {
 
-                new Dueño{IdDueño=2, IdentificacionDueño="Cedula", Nombre="Nombre", Apellido="Apellido", Direccion="Direccion", Telefono="Telefono",NombreMascota="Nombre Mascota"},
-                new Dueño{IdDueño=3, IdentificacionDueño="67032716", Nombre="Alexis", Apellido="Pedroza", Direccion="Calle 44a # 45-06", Telefono="3207813976",NombreMascota="picolo"}
+                new Dueño{IdDueño=1, IdentificacionDueño="Cedula", Nombre="Nombre", Apellido="Apellido", Direccion="Direccion", Telefono="Telefono",NombreMascota="Nombre Mascota"},
+                new Dueño{IdDueño=2, IdentificacionDueño="67032716", Nombre="Alexis", Apellido="Pedroza", Direccion="Calle 44a # 45-06", Telefono="3207813976",NombreMascota="picolo"}
             };
 
             mascota = new List<Mascota>()
@@ -91,9 +115,24 @@ namespace MascotaFeliz.App.Persistencia.AppRepositorios
 
         public Dueño AddDueño(Dueño nuevoDueño)
         {
-            nuevoDueño.IdDueño=dueño.Max(r => r.IdDueño)+1;
+            nuevoDueño.IdDueño = dueño.Max(r => r.IdDueño) + 1;
             dueño.Add(nuevoDueño);
             return nuevoDueño;
+        }
+
+        //----------------------> base de datos pagina web <--------------------------------------
+        IEnumerable<Mascota> IRepositorioPlanes.GetMascotaDueño(int idDueño)
+        {
+            var dueño = _appContext.Dueño.Where(s => s.Id == idDueño).Include(s => s.Mascota).FirstOrDefault();
+
+            return dueño.Mascota;
+        }
+        //---------------------------obteniendo dueño de la base de datos -------------------------------
+        Dueño IRepositorioPlanes.GetDueño(int idDueño)
+        {
+            //throw new System.NotImplementedException();
+            return _appContext.Dueño.FirstOrDefault(p => p.Id == idDueño);
+            //FirstOrDefault
         }
 
     }

@@ -4,6 +4,7 @@ namespace MascotaFeliz.App.Dominio
 {
     public class VisitaDomiciliaria
     {
+        public int Id {get; set;}
         public int IdVisita {get; set;}
         public int CodigoMascota {get; set;}
         public int IdentificacionMedico {get; set;}
